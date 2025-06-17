@@ -1,18 +1,53 @@
-const express = require('express');
-const app = express();
-const port = 3000;
+// var http = require('http');
+// http.createServer(function(request, response){
+// 	response.write("Hello World!");
+// 	response.end(); //close connection
+// }).listen(80); //http port
+var express = require("express");
+var server = express();
 
-//開放game資料夾作為靜態網頁
-app.use(express.static('public'));
+var bodyParser = require("body-parser");
 
-//預設首頁；載入game/index.html
-app.get('/', (req, res) => 
-{
-  res.sendFile(__dirname + '/public/index.html'); 
+
+
+server.use(express.static(__dirname + "/public"));
+server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.json());
+
+const Datastore = require('nedb-promises')
+let GameDB = Datastore.create(__dirname + '/game.db')
+
+// server.get("/", function (req, res) { //web root
+//     res.send("Hello, World!"); //回傳固定內容
+// });
+server.get("/Time", function (req, res) { //other pages
+   //url?user=md&score=1000
+   console.log(req.query);
+   res.send("req /md");
 });
 
-//啟動伺服器
-app.listen(port, () => 
-{
-  console.log(`Server is running at http://localhost:${port}`);
+
+server.post("/rank", (req, res) => {
+   GameDB.find({}, { _id: 0 }).sort({ "Time": 1 }).limit(3).then((docs) => {
+      if (docs != null) {
+         res.send(docs);
+      }
+   })
+})
+server.post("/postTime", (req, res) => {
+   console.log(req.body);
+   //save to db
+   GameDB.insert(req.body).then(doc => {
+      //find and sort and limit
+      GameDB.find({}, { _id: 0 }).sort({ "score": 1 }).limit(3).then((docs) => {
+         if (docs != null) {
+            res.send(docs);
+         }
+      })
+   });
+
+   // res.send([{name:"MD", rank:1},{name:"Jhon",rank:2}]);
 });
+
+server.listen(80);
+// 
