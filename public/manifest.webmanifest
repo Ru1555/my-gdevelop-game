@@ -1,0 +1,12 @@
+{
+  "name": "Adjoining Blade (Platformer)",
+  "short_name": "Adjoining Blade (Platformer)",
+  "id": "com.example.platformer",
+  "description": "An example of a basic platformer (Mario-like) game. Jump around and collect as many coins as you can!",
+  "orientation": "any",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "black",
+  "categories": ["games", "entertainment"],
+  "icons": []
+}
